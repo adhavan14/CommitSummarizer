@@ -15,7 +15,7 @@ export const SelectContainer = styled.div`
 export const RepoSelectContainer = styled.div`
     display: flex;
     align-items: center;
-    background-color: #3c3b3b;
+    background-color: ${(props) => props.theme.backgroundColor};
     justify-content: space-around;
     border-radius: 5px;
     width: 220px;
@@ -25,14 +25,14 @@ export const RepoSelectContainer = styled.div`
 export const BranchSelectContainer = styled.div`
     display: flex;
     align-items: center;
-    background-color: #3c3b3b;
+    background-color: ${(props) => props.theme.backgroundColor};
     justify-content: space-around;
     border-radius: 5px;
     width: 220px;
     height: 70px;
 `
 export const BoxContainer = styled.div`
-    background-color: #3c3b3b;
+    background-color: ${(props) => props.theme.backgroundColor};
     width: 550px;
     height: 700px;
     padding: 10px;
