@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:20  # Node.js version with Yarn pre-installed
+      - image: node:20  # Node.js version with Yarn pre-installed
     steps:
       - checkout  # Check out the code from the repository
 
