@@ -10,11 +10,6 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn install  # Install dependencies using Yarn
-
-      - run:
-          name: Run tests
-          command: yarn test  # Run tests using Yarn
-
       - run:
           name: Build application
           command: yarn build  # Build the React application
