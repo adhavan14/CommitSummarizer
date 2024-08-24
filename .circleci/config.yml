@@ -1,9 +1,26 @@
-version: 2
+version: 2.1
+
 jobs:
   build:
     docker:
-      - image: cimg/node:lts-slim
+      - image: circleci/node:16  # Node.js version with Yarn pre-installed
     steps:
-      - checkout
-      - run: yarn install
-      - run: yarn test
+      - checkout  # Check out the code from the repository
+
+      - run:
+          name: Install dependencies
+          command: yarn install  # Install dependencies using Yarn
+
+      - run:
+          name: Run tests
+          command: yarn test  # Run tests using Yarn
+
+      - run:
+          name: Build application
+          command: yarn build  # Build the React application
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build  # Run the build job
