@@ -1,19 +1,9 @@
-version: 2.1
-orbs:
-  node: circleci/node@5.1.1
+version: 2
 jobs:
-  build-and-test:
+  build:
     docker:
-      - image: "cimg/base:stable"
+      - image: cimg/node:lts-slim
     steps:
       - checkout
-      - node/install:
-          node-version: "16.13"
-      - node/install-packages
-      - run:
-          name: install Yarn
-          command: curl -o- -L https://yarnpkg.com/install.sh | bash, npm run test 
-workflows:
-  build-and-test:
-    jobs:
-      - build-and-test
+      - run: npm install
+      - run: npm test
