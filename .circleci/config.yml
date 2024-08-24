@@ -11,7 +11,8 @@ jobs:
           node-version: "16.13"
       - node/install-packages
       - run:
-          command: npm run test
+          name: install Yarn
+          command: curl -o- -L https://yarnpkg.com/install.sh | bash, npm run test 
 workflows:
   build-and-test:
     jobs:
