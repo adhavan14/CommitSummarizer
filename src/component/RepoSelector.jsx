@@ -3,9 +3,11 @@ import {useEffect, useState} from "react";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import PropTypes from "prop-types";
 import {RepoSelectContainer} from "./Styles.style.js";
+import {useTheme} from "styled-components";
 
-const RepoSelector = ({handleRepoChange, repository, theme}) => {
+const RepoSelector = ({handleRepoChange, repository}) => {
 
+    const currentTheme = useTheme()
     const [repos, setRepos] = useState([])
 
     const getRepositories = async () => {
@@ -21,7 +23,7 @@ const RepoSelector = ({handleRepoChange, repository, theme}) => {
         <RepoSelectContainer>
             <FormControl sx={{width: '200px'}}>
                 <InputLabel id="repository-label" sx={{
-                    color: theme === 'dark' ? '#cdcbcb' : '#3c3b3b',
+                    color: currentTheme.fontColor,
                     "&.Mui-focused": {
                         color: '#7b7d7d',
                     }
@@ -32,22 +34,22 @@ const RepoSelector = ({handleRepoChange, repository, theme}) => {
                     value={repository}
                     onChange={handleRepoChange}
                     sx={{
-                        backgroundColor: theme === 'dark' ? '#3c3b3b' : '#cdcbcb',
-                        color: theme === 'dark' ? '#cdcbcb' : '#3c3b3b',
+                        backgroundColor: currentTheme.menuColor,
+                        color: currentTheme.fontColor,
                         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                             borderColor: '#7b7d7d',
                         }
                     }}
                     MenuProps={{
                         MenuListProps: {
-                            sx: {backgroundColor: theme === 'dark' ? '#3c3b3b' : '#cdcbcb'}
+                            sx: {backgroundColor: currentTheme.menuColor}
                         }
                     }}
                 >
                     {
                         repos && repos.map((repo) => {
                             return <MenuItem key={repo.id} value={repo.name}
-                                             sx={{color: theme === 'dark' ? '#cdcbcb' : '#3c3b3b'}}>{repo.name}</MenuItem>
+                                             sx={{color: currentTheme.fontColor}}>{repo.name}</MenuItem>
                         })
                     }
                 </Select>
@@ -59,7 +61,6 @@ const RepoSelector = ({handleRepoChange, repository, theme}) => {
 RepoSelector.propTypes = {
     handleRepoChange: PropTypes.func,
     repository: PropTypes.string,
-    theme: PropTypes.string
 }
 
 export default RepoSelector

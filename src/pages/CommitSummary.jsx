@@ -1,5 +1,5 @@
-import {Button, DialogTitle, Switch, Typography} from "@mui/material";
-import {useEffect, useState} from "react";
+import {Backdrop, Button, CircularProgress, DialogTitle, Typography} from "@mui/material";
+import {useState} from "react";
 import {getSummaryByCommits} from "../services/ChatBotProxy.jsx";
 import RepoSelector from "../component/RepoSelector.jsx";
 import BranchSelector from "../component/BranchSelector.jsx";
@@ -13,15 +13,18 @@ import {
     SummaryContainer,
     TitleAndSelectWrapper
 } from "../component/Styles.style.js";
-import {ThemeProvider} from "styled-components";
+import PropTypes from "prop-types";
+import {useTheme} from "styled-components";
 
-const CommitSummary = () => {
+const CommitSummary = ({handleThemeChange}) => {
 
-    const [theme, setTheme] = useState('light')
+    const currentTheme = useTheme()
     const [repository, setRepository] = useState("")
     const [branch, setBranch] = useState("")
     const [commits, setCommits] = useState([])
     const [summary, setSummary] = useState("")
+    const [summaryLoader, setSummaryLoader] = useState(false)
+    const [commitLoader, setCommitLoader] = useState(false)
 
     const handleRepoChange = (event) => {
         setRepository(event.target.value)
@@ -31,6 +34,7 @@ const CommitSummary = () => {
     }
 
     const handleBranchChange = (event) => {
+        setCommitLoader(true)
         setBranch(event.target.value)
         setCommits([])
         setSummary("")
@@ -43,9 +47,12 @@ const CommitSummary = () => {
         })
         const summary = await getSummaryByCommits(totalCommits)
         setSummary(summary)
+        setSummaryLoader(false)
     }
 
     const handleSummary = () => {
+        setSummaryLoader(true)
+        setSummary("")
         getSummary()
     }
 
@@ -53,81 +60,82 @@ const CommitSummary = () => {
         navigator.clipboard.writeText(summary)
     }
 
-    useEffect(() => {
-        document.body.setAttribute('data-theme', theme)
-    }, [theme]);
-    const handleThemeChange = (event) => {
-        setTheme(event.target.checked ? 'dark' : 'light')
-    }
-
-    const colorTheme = {
-        'light': {
-            backgroundColor: '#cdcbcb'
-        },
-        'dark': {
-            backgroundColor: '#3c3b3b'
-        }
-    }
 
     return (
         <SummaryContainer>
-            <Switch onClick={handleThemeChange}></Switch>
+            <Button
+                sx={{
+                    color: currentTheme.fontColor,
+                    ':hover': {
+                        backgroundColor: currentTheme.button.hoverColor,
+                    },
+                    backgroundColor: currentTheme.button.bgColor,
+                }}
+                onClick={handleThemeChange}>
+                {currentTheme.component}
+            </Button>
             <TitleAndSelectWrapper>
                 <DialogTitle sx={{
-                    color: theme === 'dark' ? '#cdcbcb' : '#3c3b3b',
+                    color: currentTheme.fontColor,
                     fontSize: '30px',
                     fontFamily: 'Times New Roman'
                 }}>COMMIT
                     SUMMARIZER</DialogTitle>
-                <ThemeProvider theme={theme === 'light' ? colorTheme['light'] : colorTheme['dark']}>
-                    <SelectContainer>
-                        <RepoSelector
-                            handleRepoChange={handleRepoChange}
-                            repository={repository}
-                            theme={theme}>
-                        </RepoSelector>
-                        <BranchSelector
-                            handleBranchChange={handleBranchChange}
-                            branch={branch} repository={repository}
-                            theme={theme}>
-                        </BranchSelector>
-                    </SelectContainer>
-                </ThemeProvider>
+                <SelectContainer>
+                    <RepoSelector
+                        handleRepoChange={handleRepoChange}
+                        repository={repository}>
+                    </RepoSelector>
+                    <BranchSelector
+                        handleBranchChange={handleBranchChange}
+                        branch={branch} repository={repository}>
+                    </BranchSelector>
+                </SelectContainer>
             </TitleAndSelectWrapper>
             <BoxWrapper>
-                <ThemeProvider theme={theme === 'light' ? colorTheme['light'] : colorTheme['dark']}>
-                    <BoxContainer>
-                        <CommitBox
-                            repository={repository}
-                            branch={branch}
-                            commits={commits}
-                            setCommits={setCommits}
-                            theme={theme}>
-                        </CommitBox>
-                    </BoxContainer>
-                </ThemeProvider>
+                <BoxContainer>
+                    <Backdrop open={commitLoader} sx={{position: 'absolute',backgroundColor: currentTheme.bgLoader}}>
+                        <CircularProgress sx={{color: currentTheme.loader}}/>
+                    </Backdrop>
+                    <CommitBox
+                        repository={repository}
+                        branch={branch}
+                        commits={commits}
+                        setCommits={setCommits}
+                        setCommitLoader={setCommitLoader}>
+                    </CommitBox>
+                </BoxContainer>
                 <Button
                     onClick={handleSummary}
                     sx={{
-                        color: theme === 'dark' ? '#cdcbcb' : '#3c3b3b',
+                        ':hover': {
+                            backgroundColor: currentTheme.button.hoverColor
+                        },
+                        color: currentTheme.button.fontColor,
                         padding: '10px',
-                        backgroundColor: theme === 'dark' ? '#3c3b3b' : '#cdcbcb',
+                        backgroundColor: currentTheme.button.bgColor,
                         height: '40px'
                     }}>
                     Generate
                 </Button>
-                <ThemeProvider theme={theme === 'light' ? colorTheme['light'] : colorTheme['dark']}>
-                    <BoxContainer>
-                        <Typography sx={{color: '#cdcbcb', padding: '10px'}}>{summary}</Typography>
-                    </BoxContainer>
-                </ThemeProvider>
-
+                <BoxContainer>
+                    <Backdrop open={summaryLoader} sx={{position: 'absolute',backgroundColor: currentTheme.bgLoader}}>
+                        <CircularProgress sx={{color: currentTheme.loader}}/>
+                    </Backdrop>
+                    <Typography sx={{
+                        color: currentTheme.fontColor,
+                        padding: '10px'
+                    }}>{summary}</Typography>
+                </BoxContainer>
                 <Button
                     onClick={copyContent}
                     sx={{
-                        color: theme === 'dark' ? '#cdcbcb' : '#3c3b3b',
+                        ':hover': {
+                            backgroundColor: currentTheme.button.hoverColor
+                        },
+                        color: currentTheme.button.fontColor,
                         padding: '10px',
-                        backgroundColor: theme === 'dark' ? '#3c3b3b' : '#cdcbcb',
+                        backgroundColor: currentTheme.button.bgColor,
                         height: '40px',
                         position: 'absolute',
                         marginBottom: '750px',
@@ -138,6 +146,10 @@ const CommitSummary = () => {
             </BoxWrapper>
         </SummaryContainer>
     )
+}
+
+CommitSummary.propTypes = {
+    handleThemeChange: PropTypes.func,
 }
 
 export default CommitSummary

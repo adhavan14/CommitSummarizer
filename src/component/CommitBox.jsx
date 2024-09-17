@@ -1,13 +1,17 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {getListOfCommits} from "../services/GitHubProxy.jsx";
 import PropTypes from "prop-types";
 import {List, ListItem, ListItemText} from "@mui/material";
 import CommitIcon from '@mui/icons-material/Commit';
+import {useTheme} from "styled-components";
 
-const CommitBox = ({repository, branch, commits, setCommits, theme}) => {
+const CommitBox = ({repository, branch, commits, setCommits, setCommitLoader}) => {
+
+    const currentTheme = useTheme();
 
     const getCommits = async () => {
         const commits = await getListOfCommits(repository, branch)
+        setCommitLoader(false)
         setCommits(commits)
     }
 
@@ -23,8 +27,11 @@ const CommitBox = ({repository, branch, commits, setCommits, theme}) => {
             {
                 commits && commits.map((commit) => {
                     return <ListItem key={commit.sha}
-                                     sx={{backgroundColor: theme === 'dark' ? '#D3D3D3' : '#3c3b3b', marginBottom: '5px',
-                                     color: theme === 'dark' ? '#3c3b3b' : '#cdcbcb'}}>
+                                     sx={{
+                                         borderRadius: '10px',
+                                         backgroundColor: currentTheme.commits.bgColor, marginBottom: '5px',
+                                         color: currentTheme.fontColor,
+                                     }}>
                         <CommitIcon sx={{marginRight: '10px'}}></CommitIcon>
                         <ListItemText>{commit.commit.message}</ListItemText></ListItem>
                 })
@@ -39,7 +46,7 @@ CommitBox.propTypes = {
     branch: PropTypes.string,
     commits: PropTypes.array,
     setCommits: PropTypes.func,
-    theme: PropTypes.string
+    setCommitLoader: PropTypes.func,
 }
 
 export default CommitBox

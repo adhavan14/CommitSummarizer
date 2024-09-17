@@ -1,9 +1,7 @@
 [data-theme='dark'] {
-    /*background-image: url("src/assets/ben-arthur-Q9Ylf-AAD04-unsplash.jpg");*/
-    /*background-size: cover;*/
-    background-color: rgba(27, 26, 26, 0.91);
+    background-color: #232323;
 }
 
 [data-theme='light'] {
-    background-color: #ffffff;
+    background-color: #f5f5fd;
 }
